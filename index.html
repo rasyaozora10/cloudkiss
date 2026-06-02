@@ -1,1608 +1,594 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloudkiss Coffee & Bites | Your Lips. My Lips. Apocalypse.</title>
-    <meta name="description" content="Premium coffee shop in Pangkalan Bun. Signature drinks, cozy atmosphere, and unforgettable moments. Order via WhatsApp.">
+    <title>Rasya Coffee Space — Where Every Sip Tells a Story</title>
+    <meta name="description" content="Rasya Coffee Space - Premium coffee experience. Open daily 07.00-22.00. Where every sip tells a story.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400;1,700&family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;700&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <style>
         :root {
-            --cream: #F7F1E8;
-            --ivory: #FAF6F0;
-            --deep-cherry: #A81F2A;
-            --cherry-hover: #8B1A24;
-            --warm-beige: #D4C5B5;
-            --soft-pink: #F0D5D5;
-            --dark: #1A1A1A;
-            --charcoal: #2D2D2D;
-            --light-text: #6B6B6B;
+            --rasya-black: #0D0A07;
+            --rasya-espresso: #1A0F06;
+            --rasya-brown: #3B1F0C;
+            --rasya-amber: #C47B2B;
+            --rasya-gold: #E8A94A;
+            --rasya-cream: #F5ECD7;
+            --rasya-sage: #4A6741;
+            --rasya-mist: #8B9E7A;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--cream);
-            color: var(--dark);
+            font-family: 'DM Sans', sans-serif;
+            background: var(--rasya-black);
+            color: var(--rasya-cream);
             overflow-x: hidden;
         }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--cream);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--deep-cherry);
-            border-radius: 4px;
-        }
-
-        /* Grain Texture Overlay */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--rasya-black); }
+        ::-webkit-scrollbar-thumb { background: var(--rasya-amber); border-radius: 3px; }
         .grain-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 9999;
-            opacity: 0.03;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 9998; opacity: 0.035;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
-
-        /* Navigation */
+        .scroll-progress {
+            position: fixed; top: 0; left: 0; height: 3px;
+            background: linear-gradient(90deg, var(--rasya-amber), var(--rasya-gold));
+            z-index: 10001; width: 0%; transition: width 0.1s linear;
+        }
+        .loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--rasya-black); z-index: 99999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+        .loader.hidden { opacity: 0; visibility: hidden; }
+        .loader-logo {
+            font-family: 'Cormorant Garamond', serif; font-size: 3rem; font-weight: 700;
+            color: var(--rasya-cream); letter-spacing: 8px; margin-bottom: 2rem;
+            animation: loaderPulse 1.5s ease-in-out infinite;
+        }
+        .loader-bar { width: 200px; height: 2px; background: rgba(196,123,43,0.2); border-radius: 2px; overflow: hidden; position: relative; }
+        .loader-bar-fill { position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: var(--rasya-amber); animation: loaderFill 1.5s ease forwards; }
+        @keyframes loaderPulse { 0%,100%{opacity:0.6;transform:scale(0.95)} 50%{opacity:1;transform:scale(1)} }
+        @keyframes loaderFill { 0%{width:0%} 100%{width:100%} }
+        .reveal { opacity: 0; transform: translateY(60px); }
         nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1000;
-            padding: 1.5rem 2rem;
-            transition: all 0.4s ease;
-            background: transparent;
-        }
-
-        nav.scrolled {
-            background: rgba(247, 241, 232, 0.9);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.05);
-        }
-
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--dark);
-            text-decoration: none;
-            letter-spacing: -0.5px;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2.5rem;
-            list-style: none;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--dark);
-            font-weight: 500;
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
-            position: relative;
-            transition: color 0.3s ease;
-        }
-
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--deep-cherry);
-            transition: width 0.3s ease;
-        }
-
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        .nav-links a:hover {
-            color: var(--deep-cherry);
-        }
-
-        .nav-cta {
-            background: var(--deep-cherry);
-            color: white !important;
-            padding: 0.6rem 1.5rem;
-            border-radius: 50px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .nav-cta:hover {
-            background: var(--cherry-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(168, 31, 42, 0.3);
-        }
-
-        .nav-cta::after {
-            display: none !important;
-        }
-
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.5rem;
-        }
-
-        /* Hero Section */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-            background: linear-gradient(135deg, var(--cream) 0%, var(--ivory) 100%);
-        }
-
-        .hero-content {
-            text-align: center;
-            z-index: 2;
-            padding: 2rem;
-            max-width: 900px;
-        }
-
-        .hero-headline {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(3rem, 10vw, 7rem);
-            font-weight: 900;
-            line-height: 1.1;
-            color: var(--dark);
-            margin-bottom: 1.5rem;
-            letter-spacing: -2px;
-        }
-
-        .hero-headline span {
-            display: block;
-            opacity: 0;
-            transform: translateY(30px);
-            animation: fadeInUp 0.8s ease forwards;
-        }
-
-        .hero-headline span:nth-child(1) { animation-delay: 0.2s; }
-        .hero-headline span:nth-child(2) { animation-delay: 0.4s; color: var(--deep-cherry); }
-        .hero-headline span:nth-child(3) { animation-delay: 0.6s; }
-
-        .hero-subheadline {
-            font-family: 'Inter', sans-serif;
-            font-size: clamp(1rem, 2.5vw, 1.3rem);
-            color: var(--light-text);
-            margin-bottom: 2rem;
-            font-weight: 400;
-            opacity: 0;
-            animation: fadeInUp 0.8s ease 0.8s forwards;
-        }
-
-        .hero-slogan {
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            font-size: clamp(1.2rem, 3vw, 1.8rem);
-            color: var(--deep-cherry);
-            margin-bottom: 3rem;
-            line-height: 1.6;
-            opacity: 0;
-            animation: fadeInUp 0.8s ease 1s forwards;
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 1.5rem;
-            justify-content: center;
-            flex-wrap: wrap;
-            opacity: 0;
-            animation: fadeInUp 0.8s ease 1.2s forwards;
-        }
-
-        .btn-primary {
-            background: var(--deep-cherry);
-            color: white;
-            padding: 1rem 2.5rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            border: 2px solid var(--deep-cherry);
-        }
-
-        .btn-primary:hover {
-            background: var(--cherry-hover);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(168, 31, 42, 0.3);
-        }
-
-        .btn-secondary {
-            background: transparent;
-            color: var(--dark);
-            padding: 1rem 2.5rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            border: 2px solid var(--dark);
-        }
-
-        .btn-secondary:hover {
-            background: var(--dark);
-            color: white;
-            transform: translateY(-3px);
-        }
-
-        /* Floating Elements */
-        .floating-lips {
-            position: absolute;
-            font-size: 3rem;
-            opacity: 0.08;
-            animation: float 6s ease-in-out infinite;
-            pointer-events: none;
-        }
-
-        .floating-lips:nth-child(1) { top: 15%; left: 10%; animation-delay: 0s; }
-        .floating-lips:nth-child(2) { top: 25%; right: 15%; animation-delay: 2s; }
-        .floating-lips:nth-child(3) { bottom: 20%; left: 20%; animation-delay: 4s; }
-        .floating-lips:nth-child(4) { bottom: 30%; right: 10%; animation-delay: 1s; }
-
-        /* Decorative Circles */
-        .deco-circle {
-            position: absolute;
-            border-radius: 50%;
-            pointer-events: none;
-        }
-
-        .deco-circle-1 {
-            width: 400px;
-            height: 400px;
-            background: var(--soft-pink);
-            opacity: 0.3;
-            top: -100px;
-            right: -100px;
-            filter: blur(60px);
-        }
-
-        .deco-circle-2 {
-            width: 300px;
-            height: 300px;
-            background: var(--warm-beige);
-            opacity: 0.2;
-            bottom: -50px;
-            left: -50px;
-            filter: blur(50px);
-        }
-
-        /* About Section */
-        .about {
-            padding: 8rem 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            position: relative;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 4rem;
-        }
-
-        .section-label {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 600;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: var(--deep-cherry);
-            margin-bottom: 1rem;
-        }
-
-        .section-title {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            font-weight: 700;
-            color: var(--dark);
-            line-height: 1.2;
-        }
-
-        .about-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: center;
-        }
-
-        .about-text {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            color: var(--light-text);
-        }
-
-        .about-text p {
-            margin-bottom: 1.5rem;
-        }
-
-        .about-image {
-            position: relative;
-        }
-
-        .about-image img {
-            width: 100%;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
-        }
-
-        .about-image::before {
-            content: '';
-            position: absolute;
-            top: -20px;
-            left: -20px;
-            width: 100%;
-            height: 100%;
-            border: 2px solid var(--deep-cherry);
-            border-radius: 20px;
-            z-index: -1;
-        }
-
-        /* Menu Section */
-        .menu {
-            padding: 8rem 2rem;
-            background: var(--ivory);
-            position: relative;
-        }
-
-        .menu-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .menu-card {
-            background: white;
-            border-radius: 20px;
-            padding: 2rem;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-
-        .menu-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: var(--deep-cherry);
-            transform: scaleX(0);
-            transition: transform 0.4s ease;
-        }
-
-        .menu-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .menu-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        }
-
-        .menu-category {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 0.75rem;
-            font-weight: 600;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--deep-cherry);
-            margin-bottom: 0.5rem;
-        }
-
-        .menu-item-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--dark);
-            margin-bottom: 0.5rem;
-        }
-
-        .menu-item-desc {
-            font-size: 0.9rem;
-            color: var(--light-text);
-            line-height: 1.6;
-            margin-bottom: 1rem;
-        }
-
-        .menu-price {
-            display: inline-block;
-            background: var(--deep-cherry);
-            color: white;
-            padding: 0.4rem 1rem;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .menu-badge {
-            position: absolute;
-            top: 1.5rem;
-            right: 1.5rem;
-            background: var(--soft-pink);
-            color: var(--deep-cherry);
-            padding: 0.3rem 0.8rem;
-            border-radius: 50px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        /* Signature Drinks */
-        .signature {
-            padding: 8rem 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .signature-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .signature-card {
-            background: white;
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            transition: all 0.4s ease;
-        }
-
-        .signature-card:hover {
-            transform: translateY(-15px);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.15);
-        }
-
-        .signature-image {
-            height: 250px;
-            background: linear-gradient(135deg, var(--soft-pink) 0%, var(--warm-beige) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 4rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .signature-image::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 50%;
-            background: linear-gradient(to top, rgba(0,0,0,0.1), transparent);
-        }
-
-        .signature-content {
-            padding: 2rem;
-        }
-
-        .signature-tag {
-            display: inline-block;
-            background: var(--deep-cherry);
-            color: white;
-            padding: 0.3rem 1rem;
-            border-radius: 50px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-
-        .signature-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--dark);
-            margin-bottom: 0.5rem;
-        }
-
-        .signature-desc {
-            color: var(--light-text);
-            line-height: 1.6;
-            font-size: 0.95rem;
-        }
-
-        /* Quote Section */
-        .quote-section {
-            padding: 10rem 2rem;
-            background: var(--dark);
-            position: relative;
-            overflow: hidden;
-            text-align: center;
-        }
-
-        .quote-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 50% 50%, rgba(168, 31, 42, 0.1) 0%, transparent 70%);
-        }
-
-        .quote-text {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(2.5rem, 8vw, 6rem);
-            font-weight: 900;
-            color: var(--cream);
-            line-height: 1.2;
-            position: relative;
-            z-index: 2;
-            letter-spacing: -2px;
-        }
-
-        .quote-text span {
-            display: block;
-        }
-
-        .quote-text span:nth-child(2) {
-            color: var(--deep-cherry);
-        }
-
-        .quote-subtitle {
-            font-family: 'Inter', sans-serif;
-            font-size: 1rem;
-            color: var(--warm-beige);
-            margin-top: 2rem;
-            letter-spacing: 5px;
-            text-transform: uppercase;
-            position: relative;
-            z-index: 2;
-        }
-
-        /* Gallery Section */
-        .gallery {
-            padding: 8rem 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: repeat(2, 300px);
-            gap: 1rem;
-            margin-top: 3rem;
-        }
-
-        .gallery-item {
-            border-radius: 16px;
-            overflow: hidden;
-            position: relative;
-            cursor: pointer;
-            transition: all 0.4s ease;
-        }
-
-        .gallery-item:hover {
-            transform: scale(1.02);
-            z-index: 10;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        }
-
-        .gallery-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.4s ease;
-        }
-
-        .gallery-item:hover img {
-            transform: scale(1.1);
-        }
-
-        .gallery-item.large {
-            grid-column: span 2;
-            grid-row: span 2;
-        }
-
-        .gallery-item.wide {
-            grid-column: span 2;
-        }
-
-        .gallery-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            padding: 2rem;
-            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
-            color: white;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .gallery-item:hover .gallery-overlay {
-            opacity: 1;
-        }
-
-        .gallery-overlay h4 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.2rem;
-            margin-bottom: 0.3rem;
-        }
-
-        .gallery-overlay p {
-            font-size: 0.85rem;
-            opacity: 0.8;
-        }
-
-        /* Testimonials */
-        .testimonials {
-            padding: 8rem 2rem;
-            background: var(--ivory);
-            position: relative;
-        }
-
-        .testimonials-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .testimonials-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .testimonial-card {
-            background: white;
-            padding: 2.5rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            transition: all 0.4s ease;
-            position: relative;
-        }
-
-        .testimonial-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        }
-
-        .testimonial-card::before {
-            content: '"';
-            font-family: 'Playfair Display', serif;
-            font-size: 5rem;
-            color: var(--deep-cherry);
-            opacity: 0.2;
-            position: absolute;
-            top: 1rem;
-            left: 1.5rem;
-            line-height: 1;
-        }
-
-        .testimonial-text {
-            font-size: 1rem;
-            line-height: 1.8;
-            color: var(--light-text);
-            margin-bottom: 1.5rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .testimonial-author {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .testimonial-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--deep-cherry), var(--soft-pink));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 700;
-            font-size: 1.2rem;
-        }
-
-        .testimonial-info h4 {
-            font-weight: 600;
-            color: var(--dark);
-            margin-bottom: 0.2rem;
-        }
-
-        .testimonial-info p {
-            font-size: 0.85rem;
-            color: var(--light-text);
-        }
-
-        .stars {
-            color: #FFD700;
-            margin-bottom: 1rem;
-            font-size: 1.2rem;
-        }
-
-        /* Location Section */
-        .location {
-            padding: 8rem 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .location-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: center;
-            margin-top: 3rem;
-        }
-
-        .location-info h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2rem;
-            color: var(--dark);
-            margin-bottom: 1rem;
-        }
-
-        .location-info p {
-            color: var(--light-text);
-            line-height: 1.8;
-            margin-bottom: 1.5rem;
-        }
-
-        .location-detail {
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .location-icon {
-            width: 50px;
-            height: 50px;
-            background: var(--soft-pink);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            flex-shrink: 0;
-        }
-
-        .location-detail h4 {
-            font-weight: 600;
-            color: var(--dark);
-            margin-bottom: 0.3rem;
-        }
-
-        .location-detail p {
-            margin-bottom: 0;
-            font-size: 0.95rem;
-        }
-
-        .location-map {
-            background: var(--warm-beige);
-            border-radius: 20px;
-            height: 400px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .location-map iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            border-radius: 20px;
-        }
-
-        /* Contact Section */
-        .contact {
-            padding: 8rem 2rem;
-            background: var(--dark);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .contact::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 50% 50%, rgba(168, 31, 42, 0.15) 0%, transparent 70%);
-        }
-
-        .contact-content {
-            position: relative;
-            z-index: 2;
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        .contact h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            color: var(--cream);
-            margin-bottom: 1.5rem;
-        }
-
-        .contact p {
-            color: var(--warm-beige);
-            font-size: 1.1rem;
-            margin-bottom: 2.5rem;
-            line-height: 1.8;
-        }
-
-        .contact .btn-primary {
-            font-size: 1.1rem;
-            padding: 1.2rem 3rem;
-        }
-
-        .contact-phone {
-            margin-top: 1.5rem;
-            color: var(--warm-beige);
-            font-size: 1rem;
-        }
-
-        /* Footer */
-        footer {
-            background: #111;
-            color: white;
-            padding: 4rem 2rem 2rem;
-        }
-
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 3rem;
-            margin-bottom: 3rem;
-        }
-
-        .footer-brand h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-        }
-
-        .footer-brand p {
-            color: #888;
-            line-height: 1.8;
-            font-size: 0.95rem;
-        }
-
-        .footer-links h4 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 0.9rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 1.5rem;
-            color: var(--cream);
-        }
-
-        .footer-links ul {
-            list-style: none;
-        }
-
-        .footer-links li {
-            margin-bottom: 0.8rem;
-        }
-
-        .footer-links a {
-            color: #888;
-            text-decoration: none;
-            transition: color 0.3s ease;
-            font-size: 0.95rem;
-        }
-
-        .footer-links a:hover {
-            color: var(--deep-cherry);
-        }
-
-        .footer-bottom {
-            border-top: 1px solid #333;
-            padding-top: 2rem;
-            text-align: center;
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        .footer-slogan {
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            color: var(--deep-cherry);
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-        }
-
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0) rotate(0deg);
-            }
-            50% {
-                transform: translateY(-20px) rotate(5deg);
-            }
-        }
-
-        /* Scroll Reveal */
-        .reveal {
-            opacity: 0;
-            transform: translateY(50px);
-            transition: all 0.8s ease;
-        }
-
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 1024px) {
-            .about-content,
-            .location-content {
-                grid-template-columns: 1fr;
-            }
-
-            .signature-grid,
-            .testimonials-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .gallery-grid {
-                grid-template-columns: repeat(2, 1fr);
-                grid-template-rows: repeat(4, 250px);
-            }
-
-            .gallery-item.large {
-                grid-column: span 2;
-                grid-row: span 1;
-            }
-
-            .footer-container {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-
-            .mobile-menu-btn {
-                display: block;
-            }
-
-            .hero-headline {
-                font-size: 3rem;
-            }
-
-            .signature-grid,
-            .testimonials-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .gallery-grid {
-                grid-template-columns: 1fr;
-                grid-template-rows: repeat(8, 250px);
-            }
-
-            .gallery-item.large,
-            .gallery-item.wide {
-                grid-column: span 1;
-            }
-
-            .footer-container {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-
-            .hero-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .btn-primary,
-            .btn-secondary {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-
-        /* Mobile Menu */
-        .mobile-menu {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background: var(--cream);
-            z-index: 999;
-            padding: 6rem 2rem 2rem;
-            flex-direction: column;
-            align-items: center;
-            gap: 2rem;
-        }
-
-        .mobile-menu.active {
-            display: flex;
-        }
-
-        .mobile-menu a {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            color: var(--dark);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .mobile-menu a:hover {
-            color: var(--deep-cherry);
-        }
-
-        .mobile-menu-close {
-            position: absolute;
-            top: 1.5rem;
-            right: 2rem;
-            background: none;
-            border: none;
-            font-size: 2rem;
-            cursor: pointer;
-        }
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+            padding: 1.5rem 3rem; transition: all 0.5s ease; background: transparent;
+        }
+        nav.scrolled { background: rgba(13,10,7,0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 1rem 3rem; border-bottom: 1px solid rgba(196,123,43,0.1); }
+        .nav-container { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 700; color: var(--rasya-cream); text-decoration: none; letter-spacing: 6px; }
+        .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+        .nav-links a { font-family: 'DM Sans', sans-serif; font-size: 0.8rem; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--rasya-mist); text-decoration: none; transition: color 0.3s ease; position: relative; }
+        .nav-links a::after { content: ''; position: absolute; bottom: -6px; left: 0; width: 0; height: 1px; background: var(--rasya-amber); transition: width 0.3s ease; }
+        .nav-links a:hover { color: var(--rasya-amber); }
+        .nav-links a:hover::after { width: 100%; }
+        .mobile-menu-btn { display: none; background: none; border: none; color: var(--rasya-cream); font-size: 1.5rem; cursor: pointer; }
+        .hero { position: relative; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        #hero-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        .hero-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(ellipse at center, transparent 20%, var(--rasya-black) 80%); z-index: 2; }
+        .hero-vignette { position: absolute; top: 0; left: 0; width: 100%; height: 100%; box-shadow: inset 0 0 150px 60px var(--rasya-black); z-index: 3; pointer-events: none; }
+        .hero-content { position: relative; z-index: 4; text-align: center; max-width: 900px; padding: 2rem; }
+        .hero-logo { font-family: 'Cormorant Garamond', serif; font-size: 1rem; letter-spacing: 12px; text-transform: uppercase; color: var(--rasya-amber); margin-bottom: 2rem; opacity: 0; }
+        .hero-logo-line { width: 60px; height: 1px; background: var(--rasya-amber); margin: 1.5rem auto; opacity: 0; }
+        .hero-headline { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 700; font-style: italic; line-height: 1.2; color: var(--rasya-cream); margin-bottom: 1.5rem; }
+        .hero-headline span { display: block; opacity: 0; clip-path: inset(0 100% 0 0); }
+        .hero-subtext { font-family: 'DM Sans', sans-serif; font-size: clamp(0.9rem, 1.5vw, 1.1rem); font-weight: 300; color: var(--rasya-mist); line-height: 1.8; max-width: 500px; margin: 0 auto 2.5rem; opacity: 0; }
+        .hero-buttons { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; opacity: 0; }
+        .btn-amber { background: var(--rasya-amber); color: var(--rasya-black); padding: 1rem 2.5rem; border-radius: 6px; text-decoration: none; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; transition: all 0.4s ease; position: relative; overflow: hidden; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .btn-amber::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); transition: left 0.5s ease; }
+        .btn-amber:hover::before { left: 100%; }
+        .btn-amber:hover { background: var(--rasya-gold); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(196,123,43,0.3); }
+        .btn-outline { background: transparent; color: var(--rasya-cream); padding: 1rem 2.5rem; border-radius: 6px; text-decoration: none; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; transition: all 0.4s ease; border: 1px solid rgba(245,236,215,0.3); cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .btn-outline:hover { border-color: var(--rasya-amber); color: var(--rasya-amber); transform: translateY(-2px); }
+        .scroll-indicator { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); z-index: 4; text-align: center; opacity: 0; }
+        .scroll-indicator p { font-size: 0.7rem; letter-spacing: 4px; text-transform: uppercase; color: var(--rasya-mist); margin-bottom: 0.5rem; }
+        .scroll-arrow { width: 1px; height: 40px; background: linear-gradient(to bottom, var(--rasya-amber), transparent); margin: 0 auto; animation: scrollBounce 2s ease-in-out infinite; }
+        @keyframes scrollBounce { 0%,100%{transform:translateY(0);opacity:0.5} 50%{transform:translateY(10px);opacity:1} }
+        .about { padding: 120px 2rem; position: relative; overflow: hidden; }
+        .about-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.2fr 1fr; gap: 5rem; align-items: center; }
+        .about-label { font-family: 'Cinzel', serif; font-size: 0.75rem; letter-spacing: 4px; text-transform: uppercase; color: var(--rasya-amber); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem; }
+        .about-label::before { content: '✦'; font-size: 0.6rem; }
+        .about-heading { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 700; line-height: 1.2; color: var(--rasya-cream); margin-bottom: 2rem; }
+        .about-text { font-size: 1rem; line-height: 1.9; color: var(--rasya-mist); margin-bottom: 2rem; }
+        .about-text p { margin-bottom: 1.2rem; }
+        .about-stats { display: flex; gap: 2.5rem; margin-top: 2rem; }
+        .stat-item { text-align: center; }
+        .stat-number { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: var(--rasya-amber); display: block; }
+        .stat-label { font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; color: var(--rasya-mist); margin-top: 0.3rem; }
+        .about-visual { position: relative; min-height: 400px; border-radius: 12px; background: linear-gradient(135deg, var(--rasya-espresso) 0%, var(--rasya-brown) 100%); display: flex; align-items: center; justify-content: center; }
+        .about-visual::before { content: ''; position: absolute; top: -20px; right: -20px; width: 100%; height: 100%; border: 1px solid rgba(196,123,43,0.3); border-radius: 12px; z-index: -1; }
+        .about-visual-text { font-family: 'Cormorant Garamond', serif; font-size: 3rem; font-style: italic; color: var(--rasya-amber); opacity: 0.3; }
+        .about-ornament { position: absolute; top: -50px; right: -80px; width: 200px; height: 200px; opacity: 0.15; animation: slowRotate 30s linear infinite; }
+        @keyframes slowRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .divider { padding: 80px 2rem; background: var(--rasya-espresso); position: relative; overflow: hidden; text-align: center; }
+        .divider-grain { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.06; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); }
+        .divider-line-top, .divider-line-bottom { width: 100%; height: 1px; background: linear-gradient(90deg, transparent, var(--rasya-amber), transparent); position: relative; }
+        .divider-line-top::after, .divider-line-bottom::after { content: '◆'; position: absolute; left: 50%; transform: translateX(-50%); color: var(--rasya-amber); font-size: 0.6rem; background: var(--rasya-espresso); padding: 0 1rem; }
+        .divider-line-top::after { top: -6px; } .divider-line-bottom::after { bottom: -6px; }
+        .divider-text { font-family: 'Cormorant Garamond', serif; font-size: clamp(3rem, 8vw, 8rem); font-style: italic; font-weight: 700; background: linear-gradient(135deg, var(--rasya-amber), var(--rasya-gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-shadow: 0 0 60px rgba(196,123,43,0.3), 0 0 120px rgba(232,169,74,0.1); padding: 2rem 0; position: relative; z-index: 2; }
+        .menu-section { padding: 120px 2rem; max-width: 1200px; margin: 0 auto; }
+        .menu-header { text-align: center; margin-bottom: 4rem; }
+        .menu-label { font-family: 'Cinzel', serif; font-size: 0.75rem; letter-spacing: 4px; text-transform: uppercase; color: var(--rasya-amber); margin-bottom: 1rem; }
+        .menu-heading { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 700; color: var(--rasya-cream); }
+        .menu-tabs { display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 3rem; flex-wrap: wrap; }
+        .menu-tab { padding: 0.8rem 1.5rem; background: transparent; border: 1px solid rgba(196,123,43,0.2); border-radius: 6px; color: var(--rasya-mist); font-family: 'DM Sans', sans-serif; font-size: 0.85rem; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 0.5rem; }
+        .menu-tab:hover, .menu-tab.active { border-color: var(--rasya-amber); color: var(--rasya-amber); background: rgba(196,123,43,0.1); }
+        .menu-tab.active { box-shadow: 0 0 20px rgba(196,123,43,0.15); }
+        .menu-content { display: none; }
+        .menu-content.active { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.2rem; animation: menuFadeIn 0.4s ease; }
+        @keyframes menuFadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .menu-card { background: var(--rasya-espresso); border: 1px solid rgba(196,123,43,0.15); border-radius: 12px; padding: 1.5rem; transition: all 0.4s ease; position: relative; overflow: hidden; }
+        .menu-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--rasya-amber); transform: scaleX(0); transition: transform 0.4s ease; }
+        .menu-card:hover::before { transform: scaleX(1); }
+        .menu-card:hover { border-color: var(--rasya-amber); transform: translateY(-4px); box-shadow: 0 10px 30px rgba(196,123,43,0.15); }
+        .menu-card-name { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--rasya-cream); margin-bottom: 0.3rem; }
+        .menu-card-desc { font-size: 0.75rem; color: var(--rasya-mist); line-height: 1.4; margin-bottom: 0.8rem; font-style: italic; }
+        .menu-card-price { font-family: 'Cinzel', serif; font-size: 0.95rem; color: var(--rasya-amber); font-weight: 600; }
+        .atmosphere { padding: 100px 0; overflow: hidden; }
+        .atmosphere-header { text-align: center; padding: 0 2rem; margin-bottom: 3rem; }
+        .atmosphere-scroll { display: flex; gap: 1.5rem; padding: 0 2rem; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none; padding-bottom: 2rem; }
+        .atmosphere-scroll::-webkit-scrollbar { display: none; }
+        .atmosphere-card { flex: 0 0 300px; height: 400px; border-radius: 16px; overflow: hidden; position: relative; scroll-snap-align: start; transition: transform 0.4s ease; transform-style: preserve-3d; perspective: 1000px; display: flex; align-items: center; justify-content: center; }
+        .atmosphere-card:nth-child(1) { background: linear-gradient(135deg, #1a0f06, #3b1f0c); }
+        .atmosphere-card:nth-child(2) { background: linear-gradient(135deg, #2d1a0e, #4a2e1a); }
+        .atmosphere-card:nth-child(3) { background: linear-gradient(135deg, #3b1f0c, #5c3a1e); }
+        .atmosphere-card:nth-child(4) { background: linear-gradient(135deg, #1a0f06, #2d4a1e); }
+        .atmosphere-card:nth-child(5) { background: linear-gradient(135deg, #4a2e1a, #6b4a2e); }
+        .atmosphere-card:nth-child(6) { background: linear-gradient(135deg, #2d1a0e, #1a3a2e); }
+        .atmosphere-card:nth-child(7) { background: linear-gradient(135deg, #3b1f0c, #4a6741); }
+        .atmosphere-card-overlay { position: absolute; bottom: 0; left: 0; width: 100%; padding: 2rem 1.5rem; background: linear-gradient(to top, rgba(13,10,7,0.9), transparent); }
+        .atmosphere-card-label { font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase; color: var(--rasya-amber); margin-bottom: 0.5rem; }
+        .atmosphere-card-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; color: var(--rasya-cream); }
+        .atmosphere-card-icon { font-size: 4rem; opacity: 0.2; }
+        .testimonials { padding: 120px 2rem; max-width: 900px; margin: 0 auto; text-align: center; }
+        .testimonial-container { position: relative; min-height: 250px; }
+        .testimonial-quote-mark { font-family: 'Cormorant Garamond', serif; font-size: 20vw; color: var(--rasya-amber); opacity: 0.06; position: absolute; top: -5rem; left: 50%; transform: translateX(-50%); line-height: 1; pointer-events: none; }
+        .testimonial-slide { position: absolute; width: 100%; opacity: 0; transition: opacity 0.6s ease; padding: 2rem 0; }
+        .testimonial-slide.active { opacity: 1; position: relative; }
+        .testimonial-text { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.3rem, 3vw, 2rem); font-style: italic; font-weight: 400; line-height: 1.6; color: var(--rasya-cream); margin-bottom: 2rem; }
+        .testimonial-author { font-family: 'DM Sans', sans-serif; font-size: 0.85rem; color: var(--rasya-mist); letter-spacing: 2px; }
+        .testimonial-dots { display: flex; justify-content: center; gap: 0.8rem; margin-top: 2rem; }
+        .testimonial-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(196,123,43,0.3); cursor: pointer; transition: all 0.3s ease; }
+        .testimonial-dot.active { background: var(--rasya-amber); transform: scale(1.3); }
+        .cta-banner { padding: 120px 2rem; background: var(--rasya-espresso); position: relative; overflow: hidden; text-align: center; }
+        .cta-watermark { font-family: 'Cormorant Garamond', serif; font-size: 15vw; font-weight: 700; color: var(--rasya-cream); opacity: 0.03; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); white-space: nowrap; pointer-events: none; user-select: none; }
+        .cta-label { font-family: 'Cinzel', serif; font-size: 0.75rem; letter-spacing: 4px; text-transform: uppercase; color: var(--rasya-amber); margin-bottom: 1.5rem; position: relative; z-index: 2; }
+        .cta-heading { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 4rem); font-weight: 700; color: var(--rasya-cream); line-height: 1.2; margin-bottom: 2.5rem; position: relative; z-index: 2; }
+        .cta-buttons { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; position: relative; z-index: 2; }
+        footer { background: #080604; padding: 80px 2rem 40px; border-top: 1px solid rgba(196,123,43,0.1); }
+        .footer-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1.5fr 1.5fr; gap: 4rem; margin-bottom: 4rem; }
+        .footer-brand h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 700; color: var(--rasya-cream); letter-spacing: 4px; margin-bottom: 1rem; }
+        .footer-brand p { font-size: 0.9rem; line-height: 1.8; color: var(--rasya-mist); margin-bottom: 0.5rem; }
+        .footer-brand .hashtag { color: var(--rasya-amber); font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.1rem; }
+        .footer-col h4 { font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; color: var(--rasya-amber); margin-bottom: 1.5rem; }
+        .footer-col p, .footer-col a { font-size: 0.9rem; line-height: 2; color: var(--rasya-mist); text-decoration: none; transition: color 0.3s ease; }
+        .footer-col a:hover { color: var(--rasya-amber); }
+        .footer-bottom { border-top: 1px solid rgba(196,123,43,0.1); padding-top: 2rem; text-align: center; }
+        .footer-bottom p { font-size: 0.8rem; color: rgba(139,158,122,0.5); letter-spacing: 1px; }
+        .footer-slogan { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.2rem; color: var(--rasya-amber); margin-bottom: 1rem; opacity: 0.7; }
+        .mobile-menu { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: var(--rasya-black); z-index: 998; padding: 6rem 2rem 2rem; flex-direction: column; align-items: center; gap: 2rem; }
+        .mobile-menu.active { display: flex; }
+        .mobile-menu a { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: var(--rasya-cream); text-decoration: none; transition: color 0.3s ease; }
+        .mobile-menu a:hover { color: var(--rasya-amber); }
+        .mobile-menu-close { position: absolute; top: 1.5rem; right: 2rem; background: none; border: none; color: var(--rasya-cream); font-size: 2rem; cursor: pointer; }
+        @media (max-width: 1024px) { .about-container { grid-template-columns: 1fr; gap: 3rem; } .about-visual { order: -1; } .footer-container { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 768px) { .nav-links { display: none; } .mobile-menu-btn { display: block; } .hero-headline { font-size: 2.5rem; } .about-stats { gap: 1.5rem; } .footer-container { grid-template-columns: 1fr; gap: 2rem; } .menu-content.active { grid-template-columns: 1fr; } .atmosphere-card { flex: 0 0 260px; height: 350px; } }
     </style>
 <base target="_blank">
 </head>
 <body>
-    <!-- Grain Overlay -->
     <div class="grain-overlay"></div>
-
-    <!-- Navigation -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+    <div class="loader" id="loader">
+        <div class="loader-logo">RASYA</div>
+        <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+    </div>
     <nav id="navbar">
         <div class="nav-container">
-            <a href="#" class="logo">Cloudkiss</a>
+            <a href="#" class="nav-logo">RASYA</a>
             <ul class="nav-links">
-                <li><a href="#about">About</a></li>
+                <li><a href="#about">Cerita</a></li>
                 <li><a href="#menu">Menu</a></li>
-                <li><a href="#signature">Signature</a></li>
-                <li><a href="#gallery">Gallery</a></li>
-                <li><a href="#location">Location</a></li>
-                <li><a href="https://wa.me/6285754686754" class="nav-cta" target="_blank">Order Now</a></li>
+                <li><a href="#atmosphere">Suasana</a></li>
+                <li><a href="#testimonials">Ulasan</a></li>
+                <li><a href="#contact">Kunjungi</a></li>
             </ul>
             <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
         </div>
     </nav>
-
-    <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobileMenu">
         <button class="mobile-menu-close" onclick="toggleMobileMenu()">✕</button>
-        <a href="#about" onclick="toggleMobileMenu()">About</a>
+        <a href="#about" onclick="toggleMobileMenu()">Cerita Kami</a>
         <a href="#menu" onclick="toggleMobileMenu()">Menu</a>
-        <a href="#signature" onclick="toggleMobileMenu()">Signature</a>
-        <a href="#gallery" onclick="toggleMobileMenu()">Gallery</a>
-        <a href="#location" onclick="toggleMobileMenu()">Location</a>
-        <a href="https://wa.me/6285754686754" target="_blank">Order Now</a>
+        <a href="#atmosphere" onclick="toggleMobileMenu()">Suasana</a>
+        <a href="#testimonials" onclick="toggleMobileMenu()">Ulasan</a>
+        <a href="#contact" onclick="toggleMobileMenu()">Kunjungi</a>
     </div>
-
-    <!-- Hero Section -->
     <section class="hero" id="home">
-        <div class="deco-circle deco-circle-1"></div>
-        <div class="deco-circle deco-circle-2"></div>
-        <div class="floating-lips">💋</div>
-        <div class="floating-lips">💋</div>
-        <div class="floating-lips">💋</div>
-        <div class="floating-lips">💋</div>
-
+        <canvas id="hero-canvas"></canvas>
+        <div class="hero-overlay"></div>
+        <div class="hero-vignette"></div>
         <div class="hero-content">
+            <div class="hero-logo">RASYA COFFEE SPACE</div>
+            <div class="hero-logo-line"></div>
             <h1 class="hero-headline">
-                <span>COFFEE.</span>
-                <span>BITES.</span>
-                <span>KISSES.</span>
+                <span>"Where Every Sip"</span>
+                <span>Tells a Story."</span>
             </h1>
-            <p class="hero-subheadline">Signature coffee, sweet moments, and unforgettable conversations.</p>
-            <div class="hero-slogan">
-                Your Lips.<br>
-                My Lips.<br>
-                Apocalypse.
-            </div>
+            <p class="hero-subtext">Sebuah ruang kopi yang hangat di jantung kota — tempat di mana setiap tegukan adalah cerita baru.</p>
             <div class="hero-buttons">
-                <a href="https://wa.me/6285754686754" class="btn-primary" target="_blank">
-                    <span>💬</span> Order via WhatsApp
-                </a>
-                <a href="#menu" class="btn-secondary">
-                    <span>📋</span> View Menu
-                </a>
+                <a href="#menu" class="btn-amber">✦ Jelajahi Menu</a>
+                <a href="#contact" class="btn-outline">✦ Temukan Kami</a>
             </div>
         </div>
+        <div class="scroll-indicator">
+            <p>scroll</p>
+            <div class="scroll-arrow"></div>
+        </div>
     </section>
-
-    <!-- About Section -->
     <section class="about" id="about">
-        <div class="section-header reveal">
-            <p class="section-label">Our Story</p>
-            <h2 class="section-title">More Than Coffee.</h2>
-        </div>
-        <div class="about-content">
-            <div class="about-text reveal">
-                <p>Cloudkiss is not just a coffee shop. It is a romantic, dreamy, aesthetic space inspired by the feeling of a kiss, nostalgia, youth culture, late-night conversations, and modern café lifestyle.</p>
-                <p>Every corner is designed to evoke emotions of romance, intimacy, and mystery. From the cozy atmosphere to the aesthetic interiors, we create a community experience where coffee, conversations, and memories meet.</p>
-                <p>Whether you're here for a morning pick-me-up, an afternoon date, or a late-night chat with friends, Cloudkiss is your sanctuary. A place where every sip tells a story and every moment feels like a soft rebellion against the ordinary.</p>
+        <div class="about-container">
+            <div class="about-content reveal">
+                <div class="about-label">✦ Cerita Kami</div>
+                <h2 class="about-heading">Ruang Kopi<br>yang Berbicara</h2>
+                <div class="about-text">
+                    <p>Rasya bukan sekadar coffee shop. Ini adalah ruang di mana aroma kopi berkualitas bertemu dengan suasana yang dirancang untuk membuatmu merasa seperti di rumah sendiri.</p>
+                    <p>Dari sudut baca yang tenang hingga area kerja yang produktif, setiap bagian Rasya dirancang dengan penuh perhatian. Kami percaya bahwa kopi terbaik dinikmati dalam ruang yang terbaik.</p>
+                </div>
+                <div class="about-stats">
+                    <div class="stat-item"><span class="stat-number" data-target="4.9">0</span><div class="stat-label">⭐ Rating Google</div></div>
+                    <div class="stat-item"><span class="stat-number">2</span><div class="stat-label">🏠 Lantai</div></div>
+                    <div class="stat-item"><span class="stat-number">07-22</span><div class="stat-label">☕ Buka Setiap Hari</div></div>
+                </div>
             </div>
-            <div class="about-image reveal">
-                <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&h=600&fit=crop" alt="Cloudkiss Coffee Shop Interior">
-            </div>
-        </div>
-    </section>
-
-    <!-- Menu Section -->
-    <section class="menu" id="menu">
-        <div class="menu-container">
-            <div class="section-header reveal">
-                <p class="section-label">Our Menu</p>
-                <h2 class="section-title">Crafted With Love.</h2>
-            </div>
-            <div class="menu-grid">
-                <!-- Coffee -->
-                <div class="menu-card reveal">
-                    <span class="menu-category">Coffee</span>
-                    <h3 class="menu-item-name">Cloud Kiss</h3>
-                    <p class="menu-item-desc">Our signature creamy latte with a hint of vanilla and caramel drizzle.</p>
-                    <span class="menu-price">Rp 35K</span>
-                </div>
-                <div class="menu-card reveal">
-                    <span class="menu-category">Coffee</span>
-                    <h3 class="menu-item-name">Cheese Kiss</h3>
-                    <p class="menu-item-desc">Rich espresso topped with creamy cheese foam and cocoa powder.</p>
-                    <span class="menu-price">Rp 38K</span>
-                </div>
-                <div class="menu-card reveal">
-                    <span class="menu-category">Coffee</span>
-                    <h3 class="menu-item-name">Berry Coff</h3>
-                    <p class="menu-item-desc">Fresh berry-infused cold brew with a tangy twist.</p>
-                    <span class="menu-price">Rp 32K</span>
-                </div>
-                <div class="menu-card reveal">
-                    <span class="menu-category">Coffee</span>
-                    <h3 class="menu-item-name">Nutty Cloud</h3>
-                    <p class="menu-item-desc">Hazelnut and almond blend with steamed milk perfection.</p>
-                    <span class="menu-price">Rp 34K</span>
-                </div>
-                <div class="menu-card reveal">
-                    <span class="menu-category">Coffee</span>
-                    <h3 class="menu-item-name">Basic Creamy</h3>
-                    <p class="menu-item-desc">Classic creamy latte for those who love simplicity.</p>
-                    <span class="menu-price">Rp 28K</span>
-                </div>
-
-                <!-- Non Coffee -->
-                <div class="menu-card reveal">
-                    <span class="menu-category">Non Coffee</span>
-                    <h3 class="menu-item-name">Berry Matcha Foam</h3>
-                    <p class="menu-item-desc">Premium matcha with berry foam and sweet undertones.</p>
-                    <span class="menu-price">Rp 36K</span>
-                    <span class="menu-badge">Popular</span>
-                </div>
-                <div class="menu-card reveal">
-                    <span class="menu-category">Non Coffee</span>
-                    <h3 class="menu-item-name">Choco Noir Latte</h3>
-                    <p class="menu-item-desc">Dark chocolate latte with a mysterious, rich flavor.</p>
-                    <span class="menu-price">Rp 33K</span>
-                </div>
-
-                <!-- Classic -->
-                <div class="menu-card reveal">
-                    <span class="menu-category">Classic</span>
-                    <h3 class="menu-item-name">Americano</h3>
-                    <p class="menu-item-desc">Bold and strong. For the purists who love their coffee black.</p>
-                    <span class="menu-price">Rp 25K</span>
-                </div>
-                <div class="menu-card reveal">
-                    <span class="menu-category">Classic</span>
-                    <h3 class="menu-item-name">Berrycano</h3>
-                    <p class="menu-item-desc">Berry-infused americano with a refreshing kick.</p>
-                    <span class="menu-price">Rp 27K</span>
-                </div>
-
-                <!-- Mocktail -->
-                <div class="menu-card reveal">
-                    <span class="menu-category">Mocktail</span>
-                    <h3 class="menu-item-name">Lychee Bliss</h3>
-                    <p class="menu-item-desc">Sweet lychee mocktail with sparkling water and mint.</p>
-                    <span class="menu-price">Rp 30K</span>
-                </div>
-                <div class="menu-card reveal">
-                    <span class="menu-category">Mocktail</span>
-                    <h3 class="menu-item-name">Solar Orange Coffe</h3>
-                    <p class="menu-item-desc">Orange and coffee fusion that tastes like sunshine.</p>
-                    <span class="menu-price">Rp 31K</span>
-                </div>
-                <div class="menu-card reveal">
-                    <span class="menu-category">Mocktail</span>
-                    <h3 class="menu-item-name">Blue Horizon</h3>
-                    <p class="menu-item-desc">Butterfly pea flower tea with lemon and honey.</p>
-                    <span class="menu-price">Rp 29K</span>
-                </div>
-                <div class="menu-card reveal">
-                    <span class="menu-category">Mocktail</span>
-                    <h3 class="menu-item-name">Scarlett Fizz</h3>
-                    <p class="menu-item-desc">Pomegranate and rose mocktail with a fizzy finish.</p>
-                    <span class="menu-price">Rp 32K</span>
-                </div>
+            <div class="about-visual reveal">
+                <div class="about-visual-text">RASYA</div>
+                <svg class="about-ornament" viewBox="0 0 100 100" fill="none">
+                    <circle cx="50" cy="50" r="45" stroke="#C47B2B" stroke-width="0.5"/>
+                    <circle cx="50" cy="50" r="35" stroke="#C47B2B" stroke-width="0.3"/>
+                    <circle cx="50" cy="50" r="25" stroke="#C47B2B" stroke-width="0.2"/>
+                    <path d="M50 5 L50 95 M5 50 L95 50" stroke="#C47B2B" stroke-width="0.3"/>
+                    <path d="M21 21 L79 79 M79 21 L21 79" stroke="#C47B2B" stroke-width="0.3"/>
+                </svg>
             </div>
         </div>
     </section>
-
-    <!-- Signature Drinks -->
-    <section class="signature" id="signature">
-        <div class="section-header reveal">
-            <p class="section-label">Best Sellers</p>
-            <h2 class="section-title">Signature Drinks.</h2>
+    <section class="divider">
+        <div class="divider-grain"></div>
+        <div class="divider-line-top"></div>
+        <div class="divider-text reveal">#rasyaexperience</div>
+        <div class="divider-line-bottom"></div>
+    </section>
+    <section class="menu-section" id="menu">
+        <div class="menu-header reveal">
+            <div class="menu-label">✦ Menu Kami</div>
+            <h2 class="menu-heading">Crafted With Love.</h2>
         </div>
-        <div class="signature-grid">
-            <div class="signature-card reveal">
-                <div class="signature-image">☁️</div>
-                <div class="signature-content">
-                    <span class="signature-tag">#1 Best Seller</span>
-                    <h3 class="signature-name">Cloud Kiss</h3>
-                    <p class="signature-desc">Our most loved creation. A dreamy blend of espresso, vanilla, and caramel that feels like a kiss from the clouds. Every sip is a moment of pure bliss.</p>
-                </div>
-            </div>
-            <div class="signature-card reveal">
-                <div class="signature-image">🧀</div>
-                <div class="signature-content">
-                    <span class="signature-tag">Fan Favorite</span>
-                    <h3 class="signature-name">Cheese Kiss</h3>
-                    <p class="signature-desc">The perfect balance of bold espresso and creamy cheese foam. A unique flavor journey that surprises and delights with every taste.</p>
-                </div>
-            </div>
-            <div class="signature-card reveal">
-                <div class="signature-image">🍵</div>
-                <div class="signature-content">
-                    <span class="signature-tag">Trending Now</span>
-                    <h3 class="signature-name">Berry Matcha Foam</h3>
-                    <p class="signature-desc">Premium Japanese matcha meets fresh berry foam in this Instagram-worthy creation. Beautiful, delicious, and utterly unique.</p>
-                </div>
-            </div>
+        <div class="menu-tabs reveal">
+            <button class="menu-tab active" data-category="coffee-milk" onclick="switchMenu('coffee-milk')">☕ Coffee Milk</button>
+            <button class="menu-tab" data-category="espresso" onclick="switchMenu('espresso')">☕ Espresso Based</button>
+            <button class="menu-tab" data-category="filtered" onclick="switchMenu('filtered')">☕ Filtered Coffee</button>
+            <button class="menu-tab" data-category="noncoffee" onclick="switchMenu('noncoffee')">🍃 Non Coffee</button>
+            <button class="menu-tab" data-category="mocktail" onclick="switchMenu('mocktail')">🍸 Mocktail</button>
+            <button class="menu-tab" data-category="addon" onclick="switchMenu('addon')">➕ Add On</button>
+            <button class="menu-tab" data-category="gemelan" onclick="switchMenu('gemelan')">🍟 Gemelan</button>
+            <button class="menu-tab" data-category="makanan" onclick="switchMenu('makanan')">🍛 Makanan</button>
+            <button class="menu-tab" data-category="tambahan" onclick="switchMenu('tambahan')">➕ Tambahan</button>
+        </div>
+        <div class="menu-content active" id="coffee-milk">
+            <div class="menu-card"><div class="menu-card-name">Rasya Classic</div><div class="menu-card-desc">Kopi susu klasik dengan perpaduan sempurna antara espresso dan susu creamy</div><div class="menu-card-price">Rp 20.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Rasya Vanilla</div><div class="menu-card-desc">Kopi susu dengan sentuhan vanilla yang lembut dan aroma yang menggoda</div><div class="menu-card-price">Rp 20.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Rasya Palm</div><div class="menu-card-desc">Kopi susu dengan gula aren asli, legit dan kaya rasa karamel</div><div class="menu-card-price">Rp 20.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Rasya Cream</div><div class="menu-card-desc">Kopi susu dengan tekstur extra creamy dan rasa yang super lembut</div><div class="menu-card-price">Rp 18.000</div></div>
+        </div>
+        <div class="menu-content" id="espresso">
+            <div class="menu-card"><div class="menu-card-name">Rasya Latte</div><div class="menu-card-price">Rp 22.000 / Rp 25.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Rasya Cappuccino</div><div class="menu-card-price">Rp 25.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Rasya Piccolo</div><div class="menu-card-price">Rp 23.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Rasya Americano</div><div class="menu-card-price">Rp 20.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Rasya Espresso</div><div class="menu-card-price">Rp 18.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Rasya Tubruk</div><div class="menu-card-price">Rp 16.000</div></div>
+        </div>
+        <div class="menu-content" id="filtered">
+            <div class="menu-card"><div class="menu-card-name">Rasya Vietnam</div><div class="menu-card-desc">Vietnam drip dengan teknik penyeduhan tradisional</div><div class="menu-card-price">Rp 20.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Rasya Japanese</div><div class="menu-card-desc">Japanese style cold brew yang smooth dan refreshing</div><div class="menu-card-price">Rp 30.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Rasya V60</div><div class="menu-card-desc">Pour over V60 dengan presisi untuk rasa terbaik</div><div class="menu-card-price">Rp 30.000</div></div>
+        </div>
+        <div class="menu-content" id="noncoffee">
+            <div class="menu-card"><div class="menu-card-name">Rasya Matcha</div><div class="menu-card-desc">Matcha latte dengan matcha powder premium</div><div class="menu-card-price">Rp 23.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Rasya Red Velvet</div><div class="menu-card-desc">Minuman red velvet yang creamy dan eye-catching</div><div class="menu-card-price">Rp 23.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Rasya Tropical Blue</div><div class="menu-card-desc">Minuman biru tropis yang segar dan Instagrammable</div><div class="menu-card-price">Rp 23.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Rasya Choco</div><div class="menu-card-desc">Chocolate drink dengan coklat pilihan</div><div class="menu-card-price">Rp 18.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Rasya Milo</div><div class="menu-card-desc">Milo drink yang creamy dan nostalgic</div><div class="menu-card-price">Rp 18.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Rasya Lemon Tea</div><div class="menu-card-desc">Lemon tea segar dengan perasan lemon asli</div><div class="menu-card-price">Rp 16.000</div></div>
+        </div>
+        <div class="menu-content" id="mocktail">
+            <div class="menu-card"><div class="menu-card-name">Rasya Lembutung</div><div class="menu-card-desc">Mocktail signature dengan rasa unik dan menyegarkan</div><div class="menu-card-price">Rp 25.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Rasya Summer Berry</div><div class="menu-card-desc">Mocktail strawberry yang manis dan segar</div><div class="menu-card-price">Rp 20.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Rasya Citrus</div><div class="menu-card-desc">Mocktail orange dengan sentuhan citrus yang menyegarkan</div><div class="menu-card-price">Rp 20.000</div></div>
+        </div>
+        <div class="menu-content" id="addon">
+            <div class="menu-card"><div class="menu-card-name">Extra Shot</div><div class="menu-card-price">Rp 7.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Oatside</div><div class="menu-card-price">Rp 7.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Rich Milk</div><div class="menu-card-price">Rp 5.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Mineral</div><div class="menu-card-price">Rp 5.000</div></div>
+        </div>
+        <div class="menu-content" id="gemelan">
+            <div class="menu-card"><div class="menu-card-name">Rasya Platter</div><div class="menu-card-desc">Mix platter dengan kentang, sosis, nugget, dan bakpau</div><div class="menu-card-price">Rp 30.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Rasya Cireng</div><div class="menu-card-desc">Cireng isi ayam pedas yang gurih dan nikmat</div><div class="menu-card-price">Rp 18.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Rasya Crispy</div><div class="menu-card-desc">Singkong goreng kering yang renyah</div><div class="menu-card-price">Rp 15.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Rasya Risol</div><div class="menu-card-desc">Risol isi kentang wortel, ayam, dan mayo</div><div class="menu-card-price">Rp 15.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Rasya Fries</div><div class="menu-card-price">Rp 15.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Rasya Sosis</div><div class="menu-card-price">Rp 15.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Rasya Nugget</div><div class="menu-card-price">Rp 15.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Rasya Donut</div><div class="menu-card-price">Rp 7.000</div></div>
+        </div>
+        <div class="menu-content" id="makanan">
+            <div class="menu-card"><div class="menu-card-name">Rasya Opor</div><div class="menu-card-desc">Nasi ayam opor dengan kuah santan kental, gurih, kentang, tahu & sambal</div><div class="menu-card-price">Rp 30.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Rasya Nasi Goreng</div><div class="menu-card-desc">Nasi goreng kampung dengan telur ceplok</div><div class="menu-card-price">Rp 25.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Rasya Ayam Goreng</div><div class="menu-card-desc">Nasi ayam goreng dengan sambal pedas</div><div class="menu-card-price">Rp 25.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Rasya Kula</div><div class="menu-card-desc">Nasi dengan telur dadar dan timun serut</div><div class="menu-card-price">Rp 20.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Rasya Mie</div><div class="menu-card-desc">Indomie goreng & kuah soto spesial</div><div class="menu-card-price">Rp 15.000</div></div>
+        </div>
+        <div class="menu-content" id="tambahan">
+            <div class="menu-card"><div class="menu-card-name">Nasi Putih</div><div class="menu-card-price">Rp 5.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Telur Ceplok</div><div class="menu-card-price">Rp 5.000</div></div>
+            <div class="menu-card"><div class="menu-card-name">Telur Dadar</div><div class="menu-card-price">Rp 5.000</div></div>
         </div>
     </section>
-
-    <!-- Quote Section -->
-    <section class="quote-section">
-        <div class="quote-text">
-            <span>Your Lips.</span>
-            <span>My Lips.</span>
-            <span>Apocalypse.</span>
+    <section class="atmosphere" id="atmosphere">
+        <div class="atmosphere-header reveal">
+            <div class="menu-label">✦ Suasana</div>
+            <h2 class="menu-heading">Rasakan Vibes-nya.</h2>
         </div>
-        <p class="quote-subtitle">Cloudkiss Coffee & Bites</p>
-    </section>
-
-    <!-- Gallery Section -->
-    <section class="gallery" id="gallery">
-        <div class="section-header reveal">
-            <p class="section-label">Moments</p>
-            <h2 class="section-title">Instagram Worthy.</h2>
-        </div>
-        <div class="gallery-grid">
-            <div class="gallery-item large reveal">
-                <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&h=800&fit=crop" alt="Coffee Art">
-                <div class="gallery-overlay">
-                    <h4>Latte Art</h4>
-                    <p>Every cup is a canvas</p>
+        <div class="atmosphere-scroll">
+            <div class="atmosphere-card reveal">
+                <div class="atmosphere-card-icon">☕</div>
+                <div class="atmosphere-card-overlay">
+                    <div class="atmosphere-card-label">Lantai 1</div>
+                    <div class="atmosphere-card-title">Warm & Grounded</div>
                 </div>
             </div>
-            <div class="gallery-item reveal">
-                <img src="https://images.unsplash.com/photo-1445116572660-236099ec97a0?w=400&h=300&fit=crop" alt="Cozy Interior">
-                <div class="gallery-overlay">
-                    <h4>Cozy Vibes</h4>
-                    <p>Your perfect corner</p>
+            <div class="atmosphere-card reveal">
+                <div class="atmosphere-card-icon">📖</div>
+                <div class="atmosphere-card-overlay">
+                    <div class="atmosphere-card-label">Lantai 2</div>
+                    <div class="atmosphere-card-title">Calm & Elevated</div>
                 </div>
             </div>
-            <div class="gallery-item reveal">
-                <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&h=300&fit=crop" alt="Coffee Preparation">
-                <div class="gallery-overlay">
-                    <h4>Craft</h4>
-                    <p>Made with passion</p>
+            <div class="atmosphere-card reveal">
+                <div class="atmosphere-card-icon">🌅</div>
+                <div class="atmosphere-card-overlay">
+                    <div class="atmosphere-card-label">Moments</div>
+                    <div class="atmosphere-card-title">Golden Hour Vibes</div>
                 </div>
             </div>
-            <div class="gallery-item wide reveal">
-                <img src="https://images.unsplash.com/photo-1559496417-e7f25cb247f3?w=800&h=300&fit=crop" alt="Menu Display">
-                <div class="gallery-overlay">
-                    <h4>Menu Moments</h4>
-                    <p>Discover your new favorite</p>
+            <div class="atmosphere-card reveal">
+                <div class="atmosphere-card-icon">💻</div>
+                <div class="atmosphere-card-overlay">
+                    <div class="atmosphere-card-label">Productivity</div>
+                    <div class="atmosphere-card-title">Work From Cafe</div>
                 </div>
             </div>
-            <div class="gallery-item reveal">
-                <img src="https://images.unsplash.com/photo-1511920170033-f8396924c348?w=400&h=300&fit=crop" alt="Lifestyle">
-                <div class="gallery-overlay">
-                    <h4>Lifestyle</h4>
-                    <p>Coffee and conversations</p>
+            <div class="atmosphere-card reveal">
+                <div class="atmosphere-card-icon">🎨</div>
+                <div class="atmosphere-card-overlay">
+                    <div class="atmosphere-card-label">Aesthetic</div>
+                    <div class="atmosphere-card-title">The Art of Coffee</div>
                 </div>
             </div>
-            <div class="gallery-item reveal">
-                <img src="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&h=300&fit=crop" alt="Aesthetic">
-                <div class="gallery-overlay">
-                    <h4>Aesthetic</h4>
-                    <p>Pinterest worthy</p>
+            <div class="atmosphere-card reveal">
+                <div class="atmosphere-card-icon">🌿</div>
+                <div class="atmosphere-card-overlay">
+                    <div class="atmosphere-card-label">Nature</div>
+                    <div class="atmosphere-card-title">Green & Fresh</div>
+                </div>
+            </div>
+            <div class="atmosphere-card reveal">
+                <div class="atmosphere-card-icon">⚙️</div>
+                <div class="atmosphere-card-overlay">
+                    <div class="atmosphere-card-label">Craft</div>
+                    <div class="atmosphere-card-title">Brewing Perfection</div>
                 </div>
             </div>
         </div>
     </section>
-
-    <!-- Testimonials -->
     <section class="testimonials" id="testimonials">
-        <div class="testimonials-container">
-            <div class="section-header reveal">
-                <p class="section-label">Reviews</p>
-                <h2 class="section-title">What They Say.</h2>
+        <div class="menu-label reveal">✦ Ulasan</div>
+        <h2 class="menu-heading reveal" style="margin-bottom:3rem">What They Say.</h2>
+        <div class="testimonial-container reveal">
+            <div class="testimonial-quote-mark">"</div>
+            <div class="testimonial-slide active" data-index="0">
+                <p class="testimonial-text">"Tempat paling cozy untuk ngopi dan kerja. Rasya punya vibes yang beda dari coffee shop lain."</p>
+                <div class="testimonial-author">— Pengunjung Setia ✦</div>
             </div>
-            <div class="testimonials-grid">
-                <div class="testimonial-card reveal">
-                    <div class="stars">★★★★★</div>
-                    <p class="testimonial-text">"The coziest coffee shop in Pangkalan Bun! The Cloud Kiss is absolutely divine. The aesthetic interiors make every visit feel special. Perfect for dates and hangouts."</p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">S</div>
-                        <div class="testimonial-info">
-                            <h4>Sarah M.</h4>
-                            <p>Regular Customer</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial-card reveal">
-                    <div class="stars">★★★★★</div>
-                    <p class="testimonial-text">"Cloudkiss has the most unique drinks I've ever tasted. The Berry Matcha Foam is my go-to order. Plus, the place is so Instagrammable! Every corner is photo-worthy."</p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">R</div>
-                        <div class="testimonial-info">
-                            <h4>Rina K.</h4>
-                            <p>Content Creator</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial-card reveal">
-                    <div class="stars">★★★★★</div>
-                    <p class="testimonial-text">"Finally, a premium coffee experience in our town! The atmosphere is unmatched - romantic, intimate, and perfect for late-night conversations. The Cheese Kiss is a must-try!"</p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">A</div>
-                        <div class="testimonial-info">
-                            <h4>Andi P.</h4>
-                            <p>Coffee Enthusiast</p>
-                        </div>
-                    </div>
-                </div>
+            <div class="testimonial-slide" data-index="1">
+                <p class="testimonial-text">"Kopinya enak, tempatnya aesthetic, dan pelayanannya ramah. Perfect combination!"</p>
+                <div class="testimonial-author">— Coffee Lover ✦</div>
             </div>
+            <div class="testimonial-slide" data-index="2">
+                <p class="testimonial-text">"Satu-satunya tempat di kota ini yang benar-benar mengerti cara menyajikan kopi dengan hati."</p>
+                <div class="testimonial-author">— #rasyaexperience ✦</div>
+            </div>
+        </div>
+        <div class="testimonial-dots">
+            <div class="testimonial-dot active" onclick="goToSlide(0)"></div>
+            <div class="testimonial-dot" onclick="goToSlide(1)"></div>
+            <div class="testimonial-dot" onclick="goToSlide(2)"></div>
         </div>
     </section>
-
-    <!-- Location Section -->
-    <section class="location" id="location">
-        <div class="section-header reveal">
-            <p class="section-label">Visit Us</p>
-            <h2 class="section-title">Find Your Next Favorite Coffee Spot.</h2>
-        </div>
-        <div class="location-content">
-            <div class="location-info reveal">
-                <h3>Cloudkiss Coffee & Bites</h3>
-                <p>Come experience the magic. We're located in the heart of Pangkalan Bun, ready to serve you the perfect cup of coffee in our dreamy, aesthetic space.</p>
-
-                <div class="location-detail">
-                    <div class="location-icon">📍</div>
-                    <div>
-                        <h4>Address</h4>
-                        <p>Perum Beringin Rindang 1 / F8<br>Pangkalan Bun, Kalimantan Tengah</p>
-                    </div>
-                </div>
-
-                <div class="location-detail">
-                    <div class="location-icon">🕐</div>
-                    <div>
-                        <h4>Opening Hours</h4>
-                        <p>Open Daily<br>10:00 AM - 11:00 PM</p>
-                    </div>
-                </div>
-
-                <div class="location-detail">
-                    <div class="location-icon">📱</div>
-                    <div>
-                        <h4>Contact</h4>
-                        <p>WhatsApp: 0857-5468-6754<br>Instagram: @cloudkiss.cks</p>
-                    </div>
-                </div>
-            </div>
-            <div class="location-map reveal">
-                <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3986.8236!2d111.6236!3d-2.6844!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMsKwNDEnMDMuOCJTIDExMcKwMzcnMjQuNiJF!5e0!3m2!1sen!2sid!4v1" 
-                    allowfullscreen="" 
-                    loading="lazy">
-                </iframe>
-            </div>
+    <section class="cta-banner" id="contact">
+        <div class="cta-watermark">RASYA</div>
+        <div class="cta-label reveal">✦ Kunjungi Kami</div>
+        <h2 class="cta-heading reveal">Temukan Ceritamu<br>di Rasya.</h2>
+        <div class="cta-buttons reveal">
+            <a href="https://maps.google.com" class="btn-amber" target="_blank">📍 Lihat Lokasi</a>
+            <a href="https://instagram.com/rasfrdni" class="btn-outline" target="_blank">📸 Follow @rasfrdni</a>
         </div>
     </section>
-
-    <!-- Contact Section -->
-    <section class="contact" id="contact">
-        <div class="contact-content">
-            <h2>Ready For Your Next Cloudkiss?</h2>
-            <p>Order your favorite drink directly via WhatsApp and we'll have it ready for pickup. Experience the magic of Cloudkiss from the comfort of your home or visit us for the full aesthetic experience.</p>
-            <a href="https://wa.me/6285754686754" class="btn-primary" target="_blank">
-                <span>💬</span> Order Now via WhatsApp
-            </a>
-            <p class="contact-phone">📞 0857-5468-6754</p>
-        </div>
-    </section>
-
-    <!-- Footer -->
     <footer>
         <div class="footer-container">
             <div class="footer-brand">
-                <h3>Cloudkiss</h3>
-                <p>Cloudkiss Coffee & Bites is more than a coffee shop. It's a romantic, dreamy space where coffee, conversations, and memories meet. Located in Pangkalan Bun, serving premium coffee experiences.</p>
+                <h3>RASYA</h3>
+                <p class="footer-slogan">"Where Every Sip Tells a Story."</p>
+                <p class="hashtag">#rasyaexperience</p>
             </div>
-            <div class="footer-links">
-                <h4>Quick Links</h4>
-                <ul>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#menu">Menu</a></li>
-                    <li><a href="#signature">Signature</a></li>
-                    <li><a href="#gallery">Gallery</a></li>
-                </ul>
+            <div class="footer-col">
+                <h4>✦ Jam Buka</h4>
+                <p>07.00 AM – 22.00 PM</p>
+                <p>Setiap Hari</p>
             </div>
-            <div class="footer-links">
-                <h4>Contact</h4>
-                <ul>
-                    <li><a href="https://wa.me/6285754686754" target="_blank">WhatsApp</a></li>
-                    <li><a href="#location">Location</a></li>
-                    <li><a href="#">@cloudkiss.cks</a></li>
-                </ul>
-            </div>
-            <div class="footer-links">
-                <h4>Hours</h4>
-                <ul>
-                    <li>Open Daily</li>
-                    <li>10:00 AM - 11:00 PM</li>
-                    <li>Pangkalan Bun</li>
-                </ul>
+            <div class="footer-col">
+                <h4>✦ Kontak</h4>
+                <p>Instagram: @rasfrdni</p>
+                <p style="margin-top:1rem"><a href="https://instagram.com/rasfrdni" target="_blank">Follow Kami</a></p>
             </div>
         </div>
         <div class="footer-bottom">
-            <p class="footer-slogan">Your Lips. My Lips. Apocalypse.</p>
-            <p> Cloudkiss Coffee & Bites. All rights reserved.</p>
+            <p>© 2025 Rasya Coffee Space · All Rights Reserved</p>
         </div>
     </footer>
-
     <script>
-        // Navbar Scroll Effect
-        const navbar = document.getElementById('navbar');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+                initHeroAnimations();
+            }, 1800);
         });
-
-        // Mobile Menu Toggle
+        const scrollProgress = document.getElementById('scrollProgress');
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            scrollProgress.style.width = (scrollTop / docHeight * 100) + '%';
+        });
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', window.scrollY > 50); });
         function toggleMobileMenu() {
             const menu = document.getElementById('mobileMenu');
             menu.classList.toggle('active');
             document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : '';
         }
-
-        // Scroll Reveal Animation
-        const revealElements = document.querySelectorAll('.reveal');
-
-        const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
+        function initThreeJS() {
+            const canvas = document.getElementById('hero-canvas');
+            const scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2('#0D0A07', 0.08);
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 1, 5);
+            camera.rotation.x = -0.1;
+            const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            const particleCount = window.innerWidth < 768 ? 80 : 350;
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+            const c1 = new THREE.Color('#C47B2B'), c2 = new THREE.Color('#E8A94A'), c3 = new THREE.Color('#8B9E7A');
+            for (let i = 0; i < particleCount; i++) {
+                positions[i*3] = (Math.random()-0.5)*15;
+                positions[i*3+1] = (Math.random()-0.5)*15;
+                positions[i*3+2] = (Math.random()-0.5)*10;
+                const c = Math.random() < 0.33 ? c1 : Math.random() < 0.5 ? c2 : c3;
+                colors[i*3] = c.r; colors[i*3+1] = c.g; colors[i*3+2] = c.b;
+            }
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            const material = new THREE.PointsMaterial({ size: 0.05, vertexColors: true, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending });
+            const particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+            let time = 0;
+            function animate() {
+                requestAnimationFrame(animate);
+                time += 0.001;
+                const pos = particles.geometry.attributes.position.array;
+                for (let i = 0; i < particleCount; i++) {
+                    pos[i*3+1] += 0.002;
+                    pos[i*3] += Math.sin(time+i)*0.001;
+                    if (pos[i*3+1] > 7) pos[i*3+1] = -7;
                 }
+                particles.geometry.attributes.position.needsUpdate = true;
+                particles.rotation.y += 0.0003;
+                renderer.render(scene, camera);
+            }
+            animate();
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
             });
-        }, {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        });
-
-        revealElements.forEach(el => revealObserver.observe(el));
-
-        // Smooth Scroll for Anchor Links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        }); 
-
-        // Parallax Effect for Floating Elements
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const floatingLips = document.querySelectorAll('.floating-lips');
-            floatingLips.forEach((lip, index) => {
-                const speed = 0.5 + (index * 0.1);
-                lip.style.transform = `translateY(${scrolled * speed}px) rotate(${scrolled * 0.05}deg)`;
+        }
+        initThreeJS();
+        function initHeroAnimations() {
+            const tl = gsap.timeline();
+            tl.to('.hero-logo', { opacity: 1, scale: 1, duration: 1, ease: 'power3.out' })
+            .to('.hero-logo-line', { opacity: 1, duration: 0.6, ease: 'power2.out' }, '-=0.4')
+            .to('.hero-headline span', { opacity: 1, clipPath: 'inset(0 0% 0 0)', duration: 1.2, stagger: 0.3, ease: 'power4.out' }, '-=0.2')
+            .to('.hero-subtext', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.6')
+            .to('.hero-buttons', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.4')
+            .to('.scroll-indicator', { opacity: 1, duration: 0.6, ease: 'power2.out' }, '-=0.2');
+        }
+        gsap.registerPlugin(ScrollTrigger);
+        gsap.utils.toArray('.reveal').forEach(el => {
+            gsap.fromTo(el, { opacity: 0, y: 60 }, {
+                opacity: 1, y: 0, duration: 1, ease: 'power3.out',
+                scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none reverse' }
             });
         });
-
-        // Menu Card Hover Effect Enhancement
-        document.querySelectorAll('.menu-card').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-10px)';
+        gsap.fromTo('.about-heading', { clipPath: 'inset(100% 0 0 0)' }, {
+            clipPath: 'inset(0% 0 0 0)', duration: 1.2, ease: 'power4.out',
+            scrollTrigger: { trigger: '.about-heading', start: 'top 80%' }
+        });
+        gsap.utils.toArray('.stat-number[data-target]').forEach(el => {
+            gsap.fromTo(el, { textContent: 0 }, {
+                textContent: el.dataset.target, duration: 2, ease: 'power2.out', snap: { textContent: 0.1 },
+                scrollTrigger: { trigger: el, start: 'top 85%' }
             });
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0)';
+        });
+        gsap.fromTo('.divider-text', { opacity: 0, scale: 0.8 }, {
+            opacity: 1, scale: 1, duration: 1.5, ease: 'power3.out',
+            scrollTrigger: { trigger: '.divider', start: 'top 70%' }
+        });
+        gsap.to('.cta-watermark', {
+            y: -100, ease: 'none',
+            scrollTrigger: { trigger: '.cta-banner', start: 'top bottom', end: 'bottom top', scrub: 1 }
+        });
+        function switchMenu(category) {
+            document.querySelectorAll('.menu-tab').forEach(tab => tab.classList.toggle('active', tab.dataset.category === category));
+            document.querySelectorAll('.menu-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(category).classList.add('active');
+        }
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.testimonial-slide');
+        const dots = document.querySelectorAll('.testimonial-dot');
+        let interval = setInterval(() => goToSlide((currentSlide+1)%slides.length), 4000);
+        function goToSlide(index) {
+            slides.forEach((s,i) => { s.classList.toggle('active', i===index); dots[i].classList.toggle('active', i===index); });
+            currentSlide = index;
+        }
+        document.querySelector('.testimonial-container').addEventListener('mouseenter', () => clearInterval(interval));
+        document.querySelector('.testimonial-container').addEventListener('mouseleave', () => {
+            interval = setInterval(() => goToSlide((currentSlide+1)%slides.length), 4000);
+        });
+        document.querySelectorAll('.atmosphere-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const r = card.getBoundingClientRect();
+                const rx = (e.clientY-r.top-r.height/2)/(r.height/2)*-15;
+                const ry = (e.clientX-r.left-r.width/2)/(r.width/2)*15;
+                card.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg) scale(1.02)`;
             });
+            card.addEventListener('mouseleave', () => { card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)'; });
+        });
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => { e.preventDefault(); document.querySelector(a.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
         });
     </script>
 </body>
